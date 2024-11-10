@@ -11,50 +11,65 @@ def merge_pdfs(pdf_files):
     merger = PyPDF2.PdfMerger()
     for file in pdf_files:
         try:
-            merger.append(file)
-        except PyPDF2.PdfReadError as e:
+            with open("temp.pdf", "wb") as f:
+                f.write(file.getbuffer())
+            merger.append("temp.pdf")
+        except Exception as e:
             st.error(f"Error reading PDF file: {e}")
     merged_pdf = merger.write("merged.pdf")
+    os.remove("temp.pdf")
     return merged_pdf
 
 # PDF Splitter
 def split_pdf(pdf_file, page_range):
     try:
-        pdf = PyPDF2.PdfReader(pdf_file)
+        with open("temp.pdf", "wb") as f:
+            f.write(pdf_file.getbuffer())
+        pdf = PyPDF2.PdfReader("temp.pdf")
         writer = PyPDF2.PdfWriter()
         for page_num in range(page_range[0], page_range[1]+1):
             writer.add_page(pdf.pages[page_num-1])
         output_pdf = writer.write("split.pdf")
+        os.remove("temp.pdf")
         return output_pdf
-    except PyPDF2.PdfReadError as e:
+    except Exception as e:
         st.error(f"Error reading PDF file: {e}")
 
 # PDF Compressor
 def compress_pdf(pdf_file):
     try:
-        pdf = PyPDF2.PdfReader(pdf_file)
+        with open("temp.pdf", "wb") as f:
+            f.write(pdf_file.getbuffer())
+        pdf = PyPDF2.PdfReader("temp.pdf")
         writer = PyPDF2.PdfWriter()
         for page in pdf.pages:
             writer.add_page(page)
         compressed_pdf = writer.write("compressed.pdf")
+        os.remove("temp.pdf")
         return compressed_pdf
-    except PyPDF2.PdfReadError as e:
+    except Exception as e:
         st.error(f"Error reading PDF file: {e}")
 
 # PDF to Word Converter
 def pdf_to_word(pdf_file):
-    converter = pdf2docx.Converter(pdf_file)
+    with open("temp.pdf", "wb") as f:
+        f.write(pdf_file.getbuffer())
+    converter = pdf2docx.Converter("temp.pdf")
     docx_file = converter.convert()
+    os.remove("temp.pdf")
     return docx_file
 
 # PDF to JPG Converter
 def pdf_to_jpg(pdf_file):
-    images = convert_from_path(pdf_file)
+    with open("temp.pdf", "wb") as f:
+        f.write(pdf_file.getbuffer())
+    images = convert_from_path("temp.pdf")
     jpg_files = []
     for i, image in enumerate(images):
         jpg_file = f"page_{i+1}.jpg"
         image.save(jpg_file, "JPEG")
         jpg_files.append(jpg_file)
+    os.remove("temp.pdf")
     return jpg_files
 
 # Streamlit App
