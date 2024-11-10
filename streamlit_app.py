@@ -10,28 +10,36 @@ import os
 def merge_pdfs(pdf_files):
     merger = PyPDF2.PdfMerger()
     for file in pdf_files:
-        merger.append(file)
+        try:
+            merger.append(file)
+        except PyPDF2.PdfReadError as e:
+            st.error(f"Error reading PDF file: {e}")
     merged_pdf = merger.write("merged.pdf")
     return merged_pdf
 
 # PDF Splitter
 def split_pdf(pdf_file, page_range):
-    pdf = PyPDF2.PdfReader(pdf_file)
-    writer = PyPDF2.PdfWriter()
-    for page_num in range(page_range[0], page_range[1]+1):
-        writer.addPage(pdf.getPage(page_num-1))
-    output_pdf = writer.write("split.pdf")
-    return output_pdf
+    try:
+        pdf = PyPDF2.PdfReader(pdf_file)
+        writer = PyPDF2.PdfWriter()
+        for page_num in range(page_range[0], page_range[1]+1):
+            writer.add_page(pdf.pages[page_num-1])
+        output_pdf = writer.write("split.pdf")
+        return output_pdf
+    except PyPDF2.PdfReadError as e:
+        st.error(f"Error reading PDF file: {e}")
 
 # PDF Compressor
 def compress_pdf(pdf_file):
-    pdf = PyPDF2.PdfReader(pdf_file)
-    writer = PyPDF2.PdfWriter()
-    for page_num in range(len(pdf.pages)):
-        page = pdf.pages[page_num]
-        writer.addPage(page)
-    compressed_pdf = writer.write("compressed.pdf")
-    return compressed_pdf
+    try:
+        pdf = PyPDF2.PdfReader(pdf_file)
+        writer = PyPDF2.PdfWriter()
+        for page in pdf.pages:
+            writer.add_page(page)
+        compressed_pdf = writer.write("compressed.pdf")
+        return compressed_pdf
+    except PyPDF2.PdfReadError as e:
+        st.error(f"Error reading PDF file: {e}")
 
 # PDF to Word Converter
 def pdf_to_word(pdf_file):
