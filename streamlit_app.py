@@ -55,36 +55,36 @@ st.title("PDF Tools")
 
 # PDF Merger
 st.header("PDF Merger")
-pdf_files = st.file_uploader("Select PDF files to merge", type=["pdf"], accept_multiple_files=True)
+pdf_files = st.file_uploader("Select PDF files to merge", type=["pdf"], accept_multiple_files=True, key="merge_uploader")
 if st.button("Merge PDFs"):
     merged_pdf = merge_pdfs(pdf_files)
     st.download_button("Download Merged PDF", merged_pdf, file_name="merged.pdf")
 
 # PDF Splitter
 st.header("PDF Splitter")
-pdf_file = st.file_uploader("Select PDF file to split", type=["pdf"])
-page_range = st.slider("Select page range", 1, 100, (1, 10))
+pdf_file = st.file_uploader("Select PDF file to split", type=["pdf"], key="split_uploader")
+page_range = st.slider("Select page range", 1, 100, (1, 10), key="split_slider")
 if st.button("Split PDF"):
     split_pdf = split_pdf(pdf_file, page_range)
     st.download_button("Download Split PDF", split_pdf, file_name="split.pdf")
 
 # PDF Compressor
 st.header("PDF Compressor")
-pdf_file = st.file_uploader("Select PDF file to compress", type=["pdf"])
+pdf_file = st.file_uploader("Select PDF file to compress", type=["pdf"], key="compress_uploader")
 if st.button("Compress PDF"):
     compressed_pdf = compress_pdf(pdf_file)
     st.download_button("Download Compressed PDF", compressed_pdf, file_name="compressed.pdf")
 
 # PDF to Word Converter
 st.header("PDF to Word Converter")
-pdf_file = st.file_uploader("Select PDF file to convert", type=["pdf"])
+pdf_file = st.file_uploader("Select PDF file to convert", type=["pdf"], key="word_uploader")
 if st.button("Convert to Word"):
     docx_file = pdf_to_word(pdf_file)
     st.download_button("Download Word Document", docx_file, file_name="document.docx")
 
 # PDF to JPG Converter
 st.header("PDF to JPG Converter")
-pdf_file = st.file_uploader("Select PDF file to convert", type=["pdf"])
+pdf_file = st.file_uploader("Select PDF file to convert", type=["pdf"], key="jpg_uploader")
 if st.button("Convert to JPG"):
     jpg_files = pdf_to_jpg(pdf_file)
     for jpg_file in jpg_files:
