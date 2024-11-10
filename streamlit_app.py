@@ -8,7 +8,7 @@ import os
 
 # PDF Merger
 def merge_pdfs(pdf_files):
-    merger = PyPDF2.PdfFileMerger()
+    merger = PyPDF2.PdfMerger()
     for file in pdf_files:
         merger.append(file)
     merged_pdf = merger.write("merged.pdf")
@@ -16,8 +16,8 @@ def merge_pdfs(pdf_files):
 
 # PDF Splitter
 def split_pdf(pdf_file, page_range):
-    pdf = PyPDF2.PdfFileReader(pdf_file)
-    writer = PyPDF2.PdfFileWriter()
+    pdf = PyPDF2.PdfReader(pdf_file)
+    writer = PyPDF2.PdfWriter()
     for page_num in range(page_range[0], page_range[1]+1):
         writer.addPage(pdf.getPage(page_num-1))
     output_pdf = writer.write("split.pdf")
@@ -25,11 +25,10 @@ def split_pdf(pdf_file, page_range):
 
 # PDF Compressor
 def compress_pdf(pdf_file):
-    pdf = PyPDF2.PdfFileReader(pdf_file)
-    writer = PyPDF2.PdfFileWriter()
-    for page_num in range(pdf.numPages):
-        page = pdf.getPage(page_num)
-        page.compressContentStreams()
+    pdf = PyPDF2.PdfReader(pdf_file)
+    writer = PyPDF2.PdfWriter()
+    for page_num in range(len(pdf.pages)):
+        page = pdf.pages[page_num]
         writer.addPage(page)
     compressed_pdf = writer.write("compressed.pdf")
     return compressed_pdf
@@ -58,7 +57,7 @@ st.header("PDF Merger")
 pdf_files = st.file_uploader("Select PDF files to merge", type=["pdf"], accept_multiple_files=True, key="merge_uploader")
 if st.button("Merge PDFs"):
     merged_pdf = merge_pdfs(pdf_files)
-    st.download_button("Download Merged PDF", merged_pdf, file_name="merged.pdf")
+    st.download_button("Download Merged PDF", "merged.pdf", file_name="merged.pdf")
 
 # PDF Splitter
 st.header("PDF Splitter")
@@ -66,14 +65,14 @@ pdf_file = st.file_uploader("Select PDF file to split", type=["pdf"], key="split
 page_range = st.slider("Select page range", 1, 100, (1, 10), key="split_slider")
 if st.button("Split PDF"):
     split_pdf = split_pdf(pdf_file, page_range)
-    st.download_button("Download Split PDF", split_pdf, file_name="split.pdf")
+    st.download_button("Download Split PDF", "split.pdf", file_name="split.pdf")
 
 # PDF Compressor
 st.header("PDF Compressor")
 pdf_file = st.file_uploader("Select PDF file to compress", type=["pdf"], key="compress_uploader")
 if st.button("Compress PDF"):
     compressed_pdf = compress_pdf(pdf_file)
-    st.download_button("Download Compressed PDF", compressed_pdf, file_name="compressed.pdf")
+    st.download_button("Download Compressed PDF", "compressed.pdf", file_name="compressed.pdf")
 
 # PDF to Word Converter
 st.header("PDF to Word Converter")
