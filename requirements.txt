@@ -1,1 +1,6 @@
 streamlit
+PyPDF2 
+pdf2image
+Pillow
+pdf2docx
+docx2pdf
